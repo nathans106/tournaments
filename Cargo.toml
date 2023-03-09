@@ -1,0 +1,13 @@
+[package]
+name = "tournaments"
+version = "0.1.0"
+edition = "2021"
+authors = ["Nathan Samra"]
+description = "Rust library for running tournaments"
+repository = "https://github.com/nathans106/tournaments"
+license = "MIT"
+license-file = "LICENSE"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
