@@ -1,5 +1,5 @@
 mod factory;
-use crate::match_contender::MatchContender;
+
 pub use factory::Factory;
 
 pub type Id = u32;
@@ -26,12 +26,6 @@ impl Contestant {
 
     pub fn set_name(&mut self, name: String) {
         self.name = name;
-    }
-}
-
-impl MatchContender for Contestant {
-    fn contestant_id(&self) -> Option<Id> {
-        Some(self.id)
     }
 }
 

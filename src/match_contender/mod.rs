@@ -1,5 +1,8 @@
-use crate::contestant;
+pub mod new_contestant;
+
+use crate::contestant::Contestant;
+use std::rc::Rc;
 
 pub trait MatchContender {
-    fn contestant_id(&self) -> Option<contestant::Id>;
+    fn contestant(&self) -> Option<Rc<Contestant>>;
 }

@@ -1,5 +1,7 @@
 use crate::contestant;
+use crate::contestant::Contestant;
 use crate::match_contender::MatchContender;
+use std::rc::Rc;
 
 pub type Id = u32;
 pub type Contenders = [Box<dyn MatchContender>; 2];
@@ -8,14 +10,14 @@ pub type Contenders = [Box<dyn MatchContender>; 2];
 pub enum MatchState {
     NotReady,
     Ready,
-    Won(contestant::Id),
+    Won(Rc<Contestant>),
 }
 
 #[allow(dead_code)]
 pub struct Match {
     id: Id,
     contenders: Contenders,
-    winner_id: Option<contestant::Id>,
+    winner: Option<Rc<Contestant>>,
 }
 
 #[allow(dead_code)]
@@ -24,7 +26,7 @@ impl Match {
         Self {
             id,
             contenders: contestants,
-            winner_id: None,
+            winner: None,
         }
     }
 
@@ -36,16 +38,15 @@ impl Match {
     }
 
     pub fn state(&self) -> MatchState {
-        match self.winner_id {
+        match &self.winner {
             None => {
-                let not_ready_contender =
-                    self.contenders.iter().find(|c| c.contestant_id().is_none());
+                let not_ready_contender = self.contenders.iter().find(|c| c.contestant().is_none());
                 match not_ready_contender {
                     None => MatchState::Ready,
                     Some(_) => MatchState::NotReady,
                 }
             }
-            Some(winner_id) => MatchState::Won(winner_id),
+            Some(winner) => MatchState::Won(winner.clone()),
         }
     }
 
@@ -54,16 +55,18 @@ impl Match {
             return Err(SetWinnerError::InvalidState);
         }
 
-        let id_valid = self
+        let maybe_winner = self
             .contenders
             .iter()
-            .any(|c| &c.contestant_id().unwrap() == id);
-        if !id_valid {
-            return Err(SetWinnerError::InvalidId);
-        }
+            .find(|c| c.contestant().unwrap().id() == id);
 
-        self.winner_id = Some(*id);
-        Ok(())
+        match maybe_winner {
+            None => Err(SetWinnerError::InvalidId),
+            Some(winner) => {
+                self.winner = winner.contestant();
+                Ok(())
+            }
+        }
     }
 }
 
@@ -76,10 +79,12 @@ pub enum SetWinnerError {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::match_contender::new_contestant::NewContestant;
+    use std::rc::Rc;
 
     struct NoContender;
     impl MatchContender for NoContender {
-        fn contestant_id(&self) -> Option<contestant::Id> {
+        fn contestant(&self) -> Option<Rc<Contestant>> {
             None
         }
     }
@@ -98,8 +103,12 @@ mod tests {
         let mut factory = contestant::Factory::default();
 
         let contestants: Contenders = [
-            Box::new(factory.create_contestant("Nathan".to_string())),
-            Box::new(factory.create_contestant("Not Nathan".to_string())),
+            Box::new(NewContestant::new(
+                factory.create_contestant("Nathan".to_string()),
+            )),
+            Box::new(NewContestant::new(
+                factory.create_contestant("Not Nathan".to_string()),
+            )),
         ];
 
         let match_ = Match::new(0, contestants);
@@ -112,14 +121,18 @@ mod tests {
         let mut factory = contestant::Factory::default();
 
         let contestants: Contenders = [
-            Box::new(factory.create_contestant("Nathan".to_string())),
-            Box::new(factory.create_contestant("Not Nathan".to_string())),
+            Box::new(NewContestant::new(
+                factory.create_contestant("Nathan".to_string()),
+            )),
+            Box::new(NewContestant::new(
+                factory.create_contestant("Not Nathan".to_string()),
+            )),
         ];
 
         let mut match_ = Match::new(0, contestants);
         let winner = match_.contestants().first().unwrap();
-        let winner_id = winner.contestant_id().unwrap();
-        match_.set_winner(&winner_id).unwrap();
+        let winner = winner.contestant().unwrap();
+        match_.set_winner(winner.id()).unwrap();
         let state = match_.state();
 
         assert!(matches!(state, MatchState::Won(_)));
