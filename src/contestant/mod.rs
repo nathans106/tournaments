@@ -1,4 +1,5 @@
 mod new_contestant;
+mod new_contestant_factory;
 
 pub type Id = u32;
 
