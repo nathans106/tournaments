@@ -31,7 +31,7 @@ impl Contestant {
 
 impl MatchContender for Contestant {
     fn contestant_id(&self) -> Option<Id> {
-        Some(self.id.clone())
+        Some(self.id)
     }
 }
 
