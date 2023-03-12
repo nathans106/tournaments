@@ -1,6 +1,6 @@
 [package]
 name = "tournaments"
-version = "0.1.0-alpha2"
+version = "0.1.0-alpha3"
 edition = "2021"
 authors = ["Nathan Samra"]
 description = "Rust library for running tournaments"
