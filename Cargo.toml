@@ -5,6 +5,7 @@ edition = "2021"
 authors = ["Nathan Samra"]
 description = "Rust library for running tournaments"
 repository = "https://github.com/nathans106/tournaments"
+documentation = "https://docs.rs/tournaments"
 license = "MIT"
 
 [dependencies]

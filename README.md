@@ -7,6 +7,16 @@ Rust library for running tournaments. Currently in alpha so not ready for use.
 [![Crates.io](https://img.shields.io/crates/l/tournaments)](https://choosealicense.com/licenses/mit/)
 [![Crates.io](https://img.shields.io/crates/d/tournaments)](https://crates.io/crates/tournaments)
 
+## Use
+
+### Installation
+
+tournaments is [hosted on crates.io](https://crates.io/crates/tournaments). Install with `cargo add tournaments`.
+
+### Documentation
+
+Documentation is [hosted on doc.rs](https://docs.rs/tournaments).
+
 ## Development
 
 ### Prerequisites
