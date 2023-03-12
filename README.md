@@ -1,4 +1,4 @@
-# Tournaments (alpha)
+# tournaments (alpha)
 
 Rust library for running tournaments. Currently in alpha so not ready for use.
 
