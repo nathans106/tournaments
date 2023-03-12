@@ -1,5 +1,6 @@
 pub mod new_contestant;
 mod winner;
+pub use winner::Winner;
 
 use crate::contestant::Contestant;
 use std::rc::Rc;

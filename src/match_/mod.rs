@@ -1,5 +1,8 @@
 mod factory;
 
+pub use factory::Factory;
+use std::cell::RefCell;
+
 use crate::contestant;
 use crate::contestant::Contestant;
 use crate::match_contender::MatchContender;
@@ -7,6 +10,7 @@ use std::rc::Rc;
 
 pub type Id = u32;
 pub type Contenders = [Box<dyn MatchContender>; 2];
+pub type RcMatch = Rc<RefCell<Match>>;
 
 #[derive(Clone)]
 pub enum MatchState {

@@ -1,16 +1,15 @@
 use crate::contestant::Contestant;
-use crate::match_::{Match, MatchState};
+use crate::match_::{MatchState, RcMatch};
 use crate::match_contender::MatchContender;
-use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct Winner {
-    match_: Rc<RefCell<Match>>,
+    match_: RcMatch,
 }
 
 impl Winner {
     #[allow(dead_code)]
-    pub fn new(match_: &Rc<RefCell<Match>>) -> Self {
+    pub fn new(match_: &RcMatch) -> Self {
         Self {
             match_: match_.clone(),
         }
@@ -29,7 +28,9 @@ impl MatchContender for Winner {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::match_::Match;
     use crate::match_contender::tests::dummy_contenders;
+    use std::cell::RefCell;
 
     #[test]
     fn no_winner() {

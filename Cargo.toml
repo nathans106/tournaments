@@ -1,6 +1,6 @@
 [package]
 name = "tournaments"
-version = "0.1.0"
+version = "0.1.0-alpha0"
 edition = "2021"
 authors = ["Nathan Samra"]
 description = "Rust library for running tournaments"
@@ -8,3 +8,4 @@ repository = "https://github.com/nathans106/tournaments"
 license = "MIT"
 
 [dependencies]
+itertools = "0.10.5"
