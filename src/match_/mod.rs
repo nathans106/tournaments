@@ -1,3 +1,5 @@
+mod factory;
+
 use crate::contestant;
 use crate::contestant::Contestant;
 use crate::match_contender::MatchContender;
@@ -79,7 +81,7 @@ pub enum SetWinnerError {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::match_contender::new_contestant::NewContestant;
+    use crate::match_contender::tests::dummy_contenders;
     use std::rc::Rc;
 
     struct NoContender;
@@ -100,17 +102,7 @@ mod tests {
 
     #[test]
     fn ready() {
-        let mut factory = contestant::Factory::default();
-
-        let contestants: Contenders = [
-            Box::new(NewContestant::new(
-                factory.create_contestant("Nathan".to_string()),
-            )),
-            Box::new(NewContestant::new(
-                factory.create_contestant("Not Nathan".to_string()),
-            )),
-        ];
-
+        let contestants = dummy_contenders();
         let match_ = Match::new(0, contestants);
 
         assert!(matches!(match_.state(), MatchState::Ready));
@@ -118,23 +110,12 @@ mod tests {
 
     #[test]
     fn set_winner() {
-        let mut factory = contestant::Factory::default();
-
-        let contestants: Contenders = [
-            Box::new(NewContestant::new(
-                factory.create_contestant("Nathan".to_string()),
-            )),
-            Box::new(NewContestant::new(
-                factory.create_contestant("Not Nathan".to_string()),
-            )),
-        ];
-
+        let contestants = dummy_contenders();
         let mut match_ = Match::new(0, contestants);
-        let winner = match_.contestants().first().unwrap();
-        let winner = winner.contestant().unwrap();
-        match_.set_winner(winner.id()).unwrap();
-        let state = match_.state();
+        let winner = match_.contestants().first().unwrap().contestant().unwrap();
 
-        assert!(matches!(state, MatchState::Won(_)));
+        match_.set_winner(winner.id()).unwrap();
+
+        assert!(matches!(match_.state(), MatchState::Won(_)));
     }
 }

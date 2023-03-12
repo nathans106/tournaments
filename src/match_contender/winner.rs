@@ -29,23 +29,11 @@ impl MatchContender for Winner {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::contestant;
-    use crate::match_::Contenders;
-    use crate::match_contender::new_contestant::NewContestant;
+    use crate::match_contender::tests::dummy_contenders;
 
     #[test]
     fn no_winner() {
-        let mut factory = contestant::Factory::default();
-
-        let contestants: Contenders = [
-            Box::new(NewContestant::new(
-                factory.create_contestant("Nathan".to_string()),
-            )),
-            Box::new(NewContestant::new(
-                factory.create_contestant("Not Nathan".to_string()),
-            )),
-        ];
-
+        let contestants = dummy_contenders();
         let match_ = Rc::new(RefCell::new(Match::new(0, contestants)));
         let winner = Winner::new(&match_);
 
@@ -54,14 +42,7 @@ mod tests {
 
     #[test]
     fn winner() {
-        let contestants: Contenders = [
-            Box::new(NewContestant::new(Contestant::new(0, "Nathan".to_string()))),
-            Box::new(NewContestant::new(Contestant::new(
-                1,
-                "Not Nathan".to_string(),
-            ))),
-        ];
-
+        let contestants = dummy_contenders();
         let match_ = Rc::new(RefCell::new(Match::new(0, contestants)));
         let winner = Winner::new(&match_);
 
