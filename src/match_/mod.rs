@@ -1,29 +1,25 @@
 mod factory;
-
 pub use factory::Factory;
-use std::cell::RefCell;
 
 use crate::contestant;
 use crate::contestant::Contestant;
 use crate::match_contender::MatchContender;
-use std::rc::Rc;
 
 pub type Id = u32;
 pub type Contenders = [Box<dyn MatchContender>; 2];
-pub type RcMatch = Rc<RefCell<Match>>;
 
 #[derive(Clone)]
 pub enum MatchState {
     NotReady,
     Ready,
-    Won(Rc<Contestant>),
+    Won(Contestant),
 }
 
 #[allow(dead_code)]
 pub struct Match {
     id: Id,
     contenders: Contenders,
-    winner: Option<Rc<Contestant>>,
+    winner: Option<Contestant>,
 }
 
 #[allow(dead_code)]
@@ -56,9 +52,9 @@ impl Match {
         }
     }
 
-    pub fn set_winner(&mut self, id: &contestant::Id) -> Result<(), SetWinnerError> {
+    pub fn set_winner(&mut self, id: &contestant::Id) -> Result<(), SetWinnerInvalid> {
         if !matches!(self.state(), MatchState::Ready) {
-            return Err(SetWinnerError::InvalidState);
+            return Err(SetWinnerInvalid::State);
         }
 
         let maybe_winner = self
@@ -67,7 +63,7 @@ impl Match {
             .find(|c| c.contestant().unwrap().id() == id);
 
         match maybe_winner {
-            None => Err(SetWinnerError::InvalidId),
+            None => Err(SetWinnerInvalid::ContestantId),
             Some(winner) => {
                 self.winner = winner.contestant();
                 Ok(())
@@ -76,21 +72,22 @@ impl Match {
     }
 }
 
+#[allow(dead_code)]
 #[derive(Debug)]
-pub enum SetWinnerError {
-    InvalidId,
-    InvalidState,
+pub enum SetWinnerInvalid {
+    ContestantId,
+    MatchId,
+    State,
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::match_contender::tests::dummy_contenders;
-    use std::rc::Rc;
 
     struct NoContender;
     impl MatchContender for NoContender {
-        fn contestant(&self) -> Option<Rc<Contestant>> {
+        fn contestant(&self) -> Option<Contestant> {
             None
         }
     }
@@ -116,10 +113,21 @@ mod tests {
     fn set_winner() {
         let contestants = dummy_contenders();
         let mut match_ = Match::new(0, contestants);
-        let winner = match_.contestants().first().unwrap().contestant().unwrap();
+        let winner_id = match_
+            .contestants()
+            .first()
+            .unwrap()
+            .contestant()
+            .unwrap()
+            .id()
+            .clone();
 
-        match_.set_winner(winner.id()).unwrap();
+        match_.set_winner(&winner_id).unwrap();
+        let state = match_.state();
 
-        assert!(matches!(match_.state(), MatchState::Won(_)));
+        match state {
+            MatchState::Won(winner) => assert_eq!(winner.id(), &winner_id),
+            _ => panic!(),
+        }
     }
 }

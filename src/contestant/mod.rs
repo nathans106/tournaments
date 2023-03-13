@@ -1,10 +1,12 @@
 mod factory;
 
+use crate::match_contender::MatchContender;
 pub use factory::Factory;
 
 pub type Id = u32;
 
 #[allow(dead_code)]
+#[derive(Clone)]
 pub struct Contestant {
     id: Id,
     name: String,
@@ -26,6 +28,12 @@ impl Contestant {
 
     pub fn set_name(&mut self, name: String) {
         self.name = name;
+    }
+}
+
+impl MatchContender for Contestant {
+    fn contestant(&self) -> Option<Contestant> {
+        Some(self.clone())
     }
 }
 

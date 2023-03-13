@@ -1,6 +1,4 @@
-use crate::match_::{Contenders, Id, Match, RcMatch};
-use std::cell::RefCell;
-use std::rc::Rc;
+use crate::match_::{Contenders, Id, Match};
 
 #[derive(Default)]
 #[allow(dead_code)]
@@ -10,10 +8,10 @@ pub struct Factory {
 
 impl Factory {
     #[allow(dead_code)]
-    pub fn create_match(&mut self, contestants: Contenders) -> RcMatch {
+    pub fn create_match(&mut self, contestants: Contenders) -> Match {
         let id = self.next_id;
         self.next_id += 1;
-        Rc::new(RefCell::new(Match::new(id, contestants)))
+        Match::new(id, contestants)
     }
 }
 
@@ -28,7 +26,7 @@ mod tests {
 
         let match_ = factory.create_match(dummy_contenders());
 
-        assert_eq!(match_.borrow().id(), &0);
+        assert_eq!(match_.id(), &0);
     }
 
     #[test]
@@ -38,6 +36,6 @@ mod tests {
         let match1 = factory.create_match(dummy_contenders());
         let match2 = factory.create_match(dummy_contenders());
 
-        assert_ne!(match1.borrow().id(), match2.borrow().id());
+        assert_ne!(match1.id(), match2.id());
     }
 }
