@@ -1,4 +1,4 @@
-use crate::{contestant, match_};
+use crate::{contestant::Contestant, match_};
 use std::cell::{Ref, RefCell};
 use std::collections::hash_map::Values;
 use std::collections::HashMap;
@@ -39,13 +39,13 @@ impl Matches {
     pub fn set_winner(
         &mut self,
         match_id: &match_::Id,
-        winner_id: &contestant::Id,
+        winner: &Contestant,
     ) -> Result<(), SetWinnerInvalid> {
         let maybe_match = self.matches.get_mut(match_id);
 
         match maybe_match {
             None => Err(SetWinnerInvalid::MatchId),
-            Some(match_) => match_.borrow_mut().set_winner(winner_id),
+            Some(match_) => match_.borrow_mut().set_winner(winner),
         }
     }
 }

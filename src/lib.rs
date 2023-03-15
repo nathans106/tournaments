@@ -1,5 +1,4 @@
 mod contestant;
-mod error;
 mod match_;
 mod match_contender;
 mod matches;

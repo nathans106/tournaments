@@ -1,7 +1,6 @@
 mod factory;
 pub use factory::Factory;
 
-use crate::contestant;
 use crate::contestant::Contestant;
 use crate::match_contender::MatchContender;
 
@@ -52,7 +51,7 @@ impl Match {
         }
     }
 
-    pub fn set_winner(&mut self, id: &contestant::Id) -> Result<(), SetWinnerInvalid> {
+    pub fn set_winner(&mut self, contestant: &Contestant) -> Result<(), SetWinnerInvalid> {
         if !matches!(self.state(), MatchState::Ready) {
             return Err(SetWinnerInvalid::State);
         }
@@ -60,7 +59,7 @@ impl Match {
         let maybe_winner = self
             .contenders
             .iter()
-            .find(|c| c.contestant().unwrap().id() == id);
+            .find(|c| &c.contestant().unwrap() == contestant);
 
         match maybe_winner {
             None => Err(SetWinnerInvalid::ContestantId),
@@ -113,20 +112,13 @@ mod tests {
     fn set_winner() {
         let contestants = dummy_contenders();
         let mut match_ = Match::new(0, contestants);
-        let winner_id = match_
-            .contestants()
-            .first()
-            .unwrap()
-            .contestant()
-            .unwrap()
-            .id()
-            .clone();
+        let winner = match_.contestants().first().unwrap().contestant().unwrap();
 
-        match_.set_winner(&winner_id).unwrap();
+        match_.set_winner(&winner).unwrap();
         let state = match_.state();
 
         match state {
-            MatchState::Won(winner) => assert_eq!(winner.id(), &winner_id),
+            MatchState::Won(result) => assert_eq!(result, winner),
             _ => panic!(),
         }
     }

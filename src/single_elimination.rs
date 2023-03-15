@@ -1,25 +1,32 @@
-use crate::error::InvalidNumberOfContestantsError;
+use crate::contestant::Contestant;
+use crate::match_;
 use crate::match_::{Contenders, MatchState};
-use crate::match_contender::{MatchContender, Winner};
+use crate::match_contender::{MatchContender, NewContestant, Winner};
 use crate::matches::{MatchRef, Matches};
-use crate::{contestant, match_};
 use itertools::Itertools;
 use std::array;
+use std::error::Error;
+use std::fmt::{Display, Formatter};
 
 pub struct SingleElimination {
     matches: Matches,
 }
 
 impl SingleElimination {
-    pub fn new(names: &[String]) -> Result<Self, InvalidNumberOfContestantsError> {
+    pub fn new(names: &[String]) -> Result<Self, NewSingleEliminationError> {
         let num_contestants = names.len();
 
+        if !names.iter().all_unique() {
+            return Err(NewSingleEliminationError::ContestantsNotUnique);
+        }
+
         if !num_contestants.is_power_of_two() {
-            return Err(InvalidNumberOfContestantsError::new(num_contestants));
+            return Err(NewSingleEliminationError::InvalidNumberOfContestants(
+                num_contestants,
+            ));
         }
 
         let mut match_factory = match_::Factory::default();
-        let mut contestant_factory = contestant::Factory::default();
         let mut tournament = SingleElimination {
             matches: Matches::default(),
         };
@@ -30,8 +37,7 @@ impl SingleElimination {
                 let name = name_pair
                     .next()
                     .unwrap_or_else(|| panic!("Name {} missing", i));
-                let contestant = contestant_factory.create_contestant(name.clone());
-                let contender: Box<dyn MatchContender> = Box::new(contestant);
+                let contender: Box<dyn MatchContender> = Box::new(NewContestant::new(name.clone()));
                 contender
             });
 
@@ -70,13 +76,58 @@ impl SingleElimination {
         Ok(tournament)
     }
 
-    pub fn current_matches(&self) -> Vec<MatchRef> {
+    pub fn current_matches(&self) -> Vec<CurrentMatch> {
         self.matches
             .iter()
             .filter(|m| {
                 let state = m.borrow().state();
                 matches!(state, MatchState::Ready)
             })
+            .map(CurrentMatch::from)
             .collect()
     }
 }
+
+#[allow(dead_code)]
+pub struct CurrentMatch {
+    id: match_::Id,
+    contestants: [Contestant; 2],
+}
+
+impl From<MatchRef> for CurrentMatch {
+    fn from(match_ref: MatchRef) -> Self {
+        let match_ = match_ref.borrow();
+        assert!(matches!(match_.state(), MatchState::Ready));
+        let mut contestants_iter = match_.contestants().iter().map(|c| c.contestant().unwrap());
+
+        Self {
+            id: *match_.id(),
+            contestants: array::from_fn(|_| contestants_iter.next().unwrap()),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum NewSingleEliminationError {
+    ContestantsNotUnique,
+    InvalidNumberOfContestants(usize),
+}
+
+impl Display for NewSingleEliminationError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            NewSingleEliminationError::ContestantsNotUnique => {
+                write!(f, "Contestants are not unique")
+            }
+            NewSingleEliminationError::InvalidNumberOfContestants(num) => {
+                write!(
+                    f,
+                    "Invalid number of contestants, must be a power of 2: {}",
+                    num
+                )
+            }
+        }
+    }
+}
+
+impl Error for NewSingleEliminationError {}

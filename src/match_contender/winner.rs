@@ -48,8 +48,8 @@ mod tests {
 
         matches.insert(Match::new(0, contestants));
         let winner = Winner::new(matches.at(&0).unwrap());
-        matches.set_winner(&0, &0).unwrap();
+        matches.set_winner(&0, &"Nathan".to_string()).unwrap();
 
-        assert_eq!(winner.contestant().unwrap().id(), &0);
+        assert_eq!(winner.contestant().unwrap(), "Nathan".to_string());
     }
 }
