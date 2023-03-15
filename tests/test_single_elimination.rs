@@ -1,4 +1,4 @@
-use tournaments::SingleElimination;
+use tournaments::single_elimination_tournament;
 
 #[test]
 fn four_contestants() {
@@ -8,7 +8,7 @@ fn four_contestants() {
         "Ringo".to_string(),
         "George".to_string(),
     ];
-    let mut tournament = SingleElimination::new(names.as_slice()).unwrap();
+    let mut tournament = single_elimination_tournament(names.as_slice()).unwrap();
     assert_eq!(tournament.current_matches().len(), 2);
 
     tournament.set_winner(&0, &"John".to_string()).unwrap();

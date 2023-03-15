@@ -8,24 +8,24 @@ use crate::match_::{Match, SetWinnerInvalid};
 
 #[allow(dead_code)]
 #[derive(Default)]
-pub struct Matches {
+pub struct Bracket {
     matches: HashMap<match_::Id, Rc<RefCell<Match>>>,
 }
 
 #[allow(dead_code)]
-impl Matches {
+impl Bracket {
     pub fn len(&self) -> usize {
         self.matches.len()
     }
 
-    pub fn at(&self, id: &match_::Id) -> Option<MatchRef> {
+    pub fn match_(&self, id: &match_::Id) -> Option<MatchRef> {
         self.matches.get(id).map(|match_| MatchRef {
             match_: match_.clone(),
         })
     }
 
-    pub fn iter(&self) -> MatchesIterator {
-        MatchesIterator {
+    pub fn iter(&self) -> BracketIterator {
+        BracketIterator {
             map_iterator: self.matches.values(),
         }
     }
@@ -60,11 +60,11 @@ impl MatchRef {
     }
 }
 
-pub struct MatchesIterator<'a> {
+pub struct BracketIterator<'a> {
     map_iterator: Values<'a, match_::Id, Rc<RefCell<Match>>>,
 }
 
-impl<'a> Iterator for MatchesIterator<'a> {
+impl<'a> Iterator for BracketIterator<'a> {
     type Item = MatchRef;
 
     fn next(&mut self) -> Option<Self::Item> {

@@ -1,7 +1,15 @@
+use crate::contestant::ContestantsError;
+use crate::tournament::Tournament;
+
+mod bracket;
+mod bracket_builder;
 mod contestant;
 mod match_;
 mod match_contender;
-mod matches;
-mod single_elimination;
+mod tournament;
 
-pub use single_elimination::SingleElimination;
+pub fn single_elimination_tournament(
+    contestants: &[String],
+) -> Result<Tournament, ContestantsError> {
+    Tournament::new::<bracket_builder::SingleElimination>(contestants)
+}

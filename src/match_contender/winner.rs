@@ -1,7 +1,7 @@
+use crate::bracket::MatchRef;
 use crate::contestant::Contestant;
 use crate::match_::MatchState;
 use crate::match_contender::MatchContender;
-use crate::matches::MatchRef;
 
 pub struct Winner {
     match_: MatchRef,
@@ -26,17 +26,17 @@ impl MatchContender for Winner {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::bracket::Bracket;
     use crate::match_::Match;
     use crate::match_contender::tests::dummy_contenders;
-    use crate::matches::Matches;
 
     #[test]
     fn no_winner() {
         let contestants = dummy_contenders();
-        let mut matches = Matches::default();
+        let mut matches = Bracket::default();
         matches.insert(Match::new(0, contestants));
 
-        let winner = Winner::new(matches.at(&0).unwrap());
+        let winner = Winner::new(matches.match_(&0).unwrap());
 
         assert!(winner.contestant().is_none());
     }
@@ -44,10 +44,10 @@ mod tests {
     #[test]
     fn winner() {
         let contestants = dummy_contenders();
-        let mut matches = Matches::default();
+        let mut matches = Bracket::default();
 
         matches.insert(Match::new(0, contestants));
-        let winner = Winner::new(matches.at(&0).unwrap());
+        let winner = Winner::new(matches.match_(&0).unwrap());
         matches.set_winner(&0, &"Nathan".to_string()).unwrap();
 
         assert_eq!(winner.contestant().unwrap(), "Nathan".to_string());
