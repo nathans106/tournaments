@@ -1,6 +1,6 @@
 use crate::contestant::Contestant;
 use crate::match_;
-use crate::match_::{Contenders, MatchState};
+use crate::match_::{Contenders, MatchState, SetWinnerInvalid};
 use crate::match_contender::{MatchContender, NewContestant, Winner};
 use crate::matches::{MatchRef, Matches};
 use itertools::Itertools;
@@ -10,6 +10,7 @@ use std::fmt::{Display, Formatter};
 
 pub struct SingleElimination {
     matches: Matches,
+    final_id: match_::Id,
 }
 
 impl SingleElimination {
@@ -29,6 +30,7 @@ impl SingleElimination {
         let mut match_factory = match_::Factory::default();
         let mut tournament = SingleElimination {
             matches: Matches::default(),
+            final_id: 0,
         };
 
         let mut last_round = vec![];
@@ -73,6 +75,7 @@ impl SingleElimination {
             last_round = cur_round;
         }
 
+        tournament.final_id = *last_round.last().unwrap();
         Ok(tournament)
     }
 
@@ -85,6 +88,20 @@ impl SingleElimination {
             })
             .map(CurrentMatch::from)
             .collect()
+    }
+
+    pub fn set_winner(
+        &mut self,
+        match_id: &match_::Id,
+        winner: &Contestant,
+    ) -> Result<Option<Contestant>, SetWinnerInvalid> {
+        self.matches.set_winner(match_id, winner).map(|_| {
+            if match_id == &self.final_id {
+                return Some(winner.clone());
+            }
+
+            None
+        })
     }
 }
 
