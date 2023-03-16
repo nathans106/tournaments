@@ -13,16 +13,18 @@ use crate::match_::{Match, MatchState, SetWinnerInvalid};
 
 pub type MatchId = usize;
 
-#[allow(dead_code)]
 #[derive(Default)]
 pub struct Bracket {
     matches: Vec<Rc<RefCell<Match>>>,
 }
 
-#[allow(dead_code)]
 impl Bracket {
     pub fn len(&self) -> usize {
         self.matches.len()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.matches.is_empty()
     }
 
     pub fn match_(&self, id: &MatchId) -> Option<MatchRef> {

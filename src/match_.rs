@@ -10,13 +10,11 @@ pub enum MatchState {
     Won(Contestant),
 }
 
-#[allow(dead_code)]
 pub struct Match {
     contenders: Contenders,
     winner: Option<Contestant>,
 }
 
-#[allow(dead_code)]
 impl Match {
     pub fn new(contestants: Contenders) -> Self {
         Self {
@@ -62,7 +60,6 @@ impl Match {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Debug)]
 pub enum SetWinnerInvalid {
     ContestantId,

@@ -4,10 +4,9 @@ use crate::contestant::Contestant;
 use crate::match_::MatchState;
 use std::array;
 
-#[allow(dead_code)]
 pub struct CurrentMatch {
-    id: MatchId,
-    contestants: [Contestant; 2],
+    pub id: MatchId,
+    pub contestants: [Contestant; 2],
 }
 
 impl CurrentMatch {

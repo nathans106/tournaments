@@ -8,7 +8,6 @@ pub struct Winner {
 }
 
 impl Winner {
-    #[allow(dead_code)]
     pub fn new(match_: MatchRef) -> Self {
         Self { match_ }
     }

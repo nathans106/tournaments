@@ -1,12 +1,12 @@
 use crate::contestant::ContestantsError;
 use crate::tournament::Tournament;
 
-mod bracket;
-mod bracket_builder;
-mod contestant;
+pub mod bracket;
+pub mod bracket_builder;
+pub mod contestant;
 mod match_;
 mod match_contender;
-mod tournament;
+pub mod tournament;
 
 pub fn single_elimination_tournament(
     contestants: &[String],
