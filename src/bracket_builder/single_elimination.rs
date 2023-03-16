@@ -1,8 +1,8 @@
+use crate::bracket;
 use crate::bracket::Bracket;
 use crate::bracket_builder::BracketBuilder;
 use crate::contestant::{Contestant, ContestantsError};
-use crate::match_;
-use crate::match_::Contenders;
+use crate::match_::{Contenders, Match};
 use crate::match_contender::{MatchContender, NewContestant, Winner};
 use itertools::Itertools;
 use std::array;
@@ -12,14 +12,13 @@ pub struct SingleElimination {}
 impl BracketBuilder for SingleElimination {
     fn build_bracket(
         contestants: &[Contestant],
-    ) -> Result<(Bracket, match_::MatchId), ContestantsError> {
+    ) -> Result<(Bracket, bracket::MatchId), ContestantsError> {
         let num_contestants = contestants.len();
 
         if !num_contestants.is_power_of_two() {
             return Err(ContestantsError::InvalidNumber(num_contestants));
         }
 
-        let mut match_factory = match_::Factory::default();
         let mut bracket = Bracket::default();
 
         let mut last_round = vec![];
@@ -32,8 +31,7 @@ impl BracketBuilder for SingleElimination {
                 contender
             });
 
-            let match_ = match_factory.create_match(contenders);
-            last_round.push(bracket.insert(match_));
+            last_round.push(bracket.insert(Match::new(contenders)));
         }
 
         let num_rounds = (num_contestants as f64).sqrt() as u32;
@@ -54,7 +52,7 @@ impl BracketBuilder for SingleElimination {
                 let selectors: Contenders =
                     std::array::from_fn(|_| contenders_iter.next().unwrap());
 
-                cur_round.push(bracket.insert(match_factory.create_match(selectors)));
+                cur_round.push(bracket.insert(Match::new(selectors)));
             }
 
             last_round = cur_round;

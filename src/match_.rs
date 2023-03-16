@@ -1,10 +1,6 @@
-mod factory;
-pub use factory::Factory;
-
 use crate::contestant::Contestant;
 use crate::match_contender::MatchContender;
 
-pub type MatchId = u32;
 pub type Contenders = [Box<dyn MatchContender>; 2];
 
 #[derive(Clone)]
@@ -16,24 +12,19 @@ pub enum MatchState {
 
 #[allow(dead_code)]
 pub struct Match {
-    id: MatchId,
     contenders: Contenders,
     winner: Option<Contestant>,
 }
 
 #[allow(dead_code)]
 impl Match {
-    pub fn new(id: MatchId, contestants: Contenders) -> Self {
+    pub fn new(contestants: Contenders) -> Self {
         Self {
-            id,
             contenders: contestants,
             winner: None,
         }
     }
 
-    pub fn id(&self) -> &MatchId {
-        &self.id
-    }
     pub fn contestants(&self) -> &Contenders {
         &self.contenders
     }
@@ -95,7 +86,7 @@ mod tests {
     fn not_ready() {
         let contestants: Contenders = [Box::new(NoContender), Box::new(NoContender)];
 
-        let match_ = Match::new(0, contestants);
+        let match_ = Match::new(contestants);
 
         assert!(matches!(match_.state(), MatchState::NotReady));
     }
@@ -103,7 +94,7 @@ mod tests {
     #[test]
     fn ready() {
         let contestants = dummy_contenders();
-        let match_ = Match::new(0, contestants);
+        let match_ = Match::new(contestants);
 
         assert!(matches!(match_.state(), MatchState::Ready));
     }
@@ -111,7 +102,7 @@ mod tests {
     #[test]
     fn set_winner() {
         let contestants = dummy_contenders();
-        let mut match_ = Match::new(0, contestants);
+        let mut match_ = Match::new(contestants);
         let winner = match_.contestants().first().unwrap().contestant().unwrap();
 
         match_.set_winner(&winner).unwrap();

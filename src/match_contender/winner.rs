@@ -34,7 +34,7 @@ mod tests {
     fn no_winner() {
         let contestants = dummy_contenders();
         let mut matches = Bracket::default();
-        matches.insert(Match::new(0, contestants));
+        matches.insert(Match::new(contestants));
 
         let winner = Winner::new(matches.match_(&0).unwrap());
 
@@ -46,7 +46,7 @@ mod tests {
         let contestants = dummy_contenders();
         let mut matches = Bracket::default();
 
-        matches.insert(Match::new(0, contestants));
+        matches.insert(Match::new(contestants));
         let winner = Winner::new(matches.match_(&0).unwrap());
         matches.set_winner(&0, &"Nathan".to_string()).unwrap();
 

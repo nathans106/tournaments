@@ -1,13 +1,12 @@
-use crate::bracket::Bracket;
+use crate::bracket::{Bracket, MatchId};
 use crate::bracket_builder::BracketBuilder;
 use crate::contestant::{Contestant, ContestantsError};
-use crate::match_;
 use crate::match_::SetWinnerInvalid;
 use itertools::Itertools;
 
 pub struct Tournament {
     bracket: Bracket,
-    final_id: match_::MatchId,
+    final_id: MatchId,
 }
 
 impl Tournament {
@@ -28,7 +27,7 @@ impl Tournament {
 
     pub fn set_winner(
         &mut self,
-        match_id: &match_::MatchId,
+        match_id: &MatchId,
         winner: &Contestant,
     ) -> Result<Option<Contestant>, SetWinnerInvalid> {
         self.bracket.set_winner(match_id, winner).map(|_| {
