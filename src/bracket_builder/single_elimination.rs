@@ -12,7 +12,7 @@ pub struct SingleElimination {}
 impl BracketBuilder for SingleElimination {
     fn build_bracket(
         contestants: &[Contestant],
-    ) -> Result<(Bracket, match_::Id), ContestantsError> {
+    ) -> Result<(Bracket, match_::MatchId), ContestantsError> {
         let num_contestants = contestants.len();
 
         if !num_contestants.is_power_of_two() {

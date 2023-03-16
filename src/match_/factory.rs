@@ -1,9 +1,9 @@
-use crate::match_::{Contenders, Id, Match};
+use crate::match_::{Contenders, Match, MatchId};
 
 #[derive(Default)]
 #[allow(dead_code)]
 pub struct Factory {
-    next_id: Id,
+    next_id: MatchId,
 }
 
 impl Factory {

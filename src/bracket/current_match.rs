@@ -6,7 +6,7 @@ use std::array;
 
 #[allow(dead_code)]
 pub struct CurrentMatch {
-    id: match_::Id,
+    id: match_::MatchId,
     contestants: [Contestant; 2],
 }
 

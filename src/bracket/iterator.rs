@@ -1,15 +1,15 @@
 use crate::bracket::match_ref::MatchRef;
-use crate::match_::{Id, Match};
+use crate::match_::{Match, MatchId};
 use std::cell::RefCell;
 use std::collections::hash_map::Values;
 use std::rc::Rc;
 
 pub struct BracketIterator<'a> {
-    map_iterator: Values<'a, Id, Rc<RefCell<Match>>>,
+    map_iterator: Values<'a, MatchId, Rc<RefCell<Match>>>,
 }
 
-impl<'a> From<Values<'a, Id, Rc<RefCell<Match>>>> for BracketIterator<'a> {
-    fn from(value: Values<'a, Id, Rc<RefCell<Match>>>) -> Self {
+impl<'a> From<Values<'a, MatchId, Rc<RefCell<Match>>>> for BracketIterator<'a> {
+    fn from(value: Values<'a, MatchId, Rc<RefCell<Match>>>) -> Self {
         Self {
             map_iterator: value,
         }

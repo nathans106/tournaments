@@ -15,7 +15,7 @@ use crate::match_::{Match, MatchState, SetWinnerInvalid};
 #[allow(dead_code)]
 #[derive(Default)]
 pub struct Bracket {
-    matches: HashMap<match_::Id, Rc<RefCell<Match>>>,
+    matches: HashMap<match_::MatchId, Rc<RefCell<Match>>>,
 }
 
 #[allow(dead_code)]
@@ -24,7 +24,7 @@ impl Bracket {
         self.matches.len()
     }
 
-    pub fn match_(&self, id: &match_::Id) -> Option<MatchRef> {
+    pub fn match_(&self, id: &match_::MatchId) -> Option<MatchRef> {
         self.matches
             .get(id)
             .map(|match_| MatchRef::new(match_.clone()))
@@ -44,7 +44,7 @@ impl Bracket {
         BracketIterator::from(self.matches.values())
     }
 
-    pub fn insert(&mut self, match_: Match) -> match_::Id {
+    pub fn insert(&mut self, match_: Match) -> match_::MatchId {
         let id = *match_.id();
         self.matches.insert(id, Rc::new(RefCell::new(match_)));
         id
@@ -52,7 +52,7 @@ impl Bracket {
 
     pub fn set_winner(
         &mut self,
-        match_id: &match_::Id,
+        match_id: &match_::MatchId,
         winner: &Contestant,
     ) -> Result<(), SetWinnerInvalid> {
         let maybe_match = self.matches.get_mut(match_id);

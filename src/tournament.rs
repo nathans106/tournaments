@@ -7,7 +7,7 @@ use itertools::Itertools;
 
 pub struct Tournament {
     bracket: Bracket,
-    final_id: match_::Id,
+    final_id: match_::MatchId,
 }
 
 impl Tournament {
@@ -28,7 +28,7 @@ impl Tournament {
 
     pub fn set_winner(
         &mut self,
-        match_id: &match_::Id,
+        match_id: &match_::MatchId,
         winner: &Contestant,
     ) -> Result<Option<Contestant>, SetWinnerInvalid> {
         self.bracket.set_winner(match_id, winner).map(|_| {

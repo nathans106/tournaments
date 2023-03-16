@@ -4,7 +4,7 @@ pub use factory::Factory;
 use crate::contestant::Contestant;
 use crate::match_contender::MatchContender;
 
-pub type Id = u32;
+pub type MatchId = u32;
 pub type Contenders = [Box<dyn MatchContender>; 2];
 
 #[derive(Clone)]
@@ -16,14 +16,14 @@ pub enum MatchState {
 
 #[allow(dead_code)]
 pub struct Match {
-    id: Id,
+    id: MatchId,
     contenders: Contenders,
     winner: Option<Contestant>,
 }
 
 #[allow(dead_code)]
 impl Match {
-    pub fn new(id: Id, contestants: Contenders) -> Self {
+    pub fn new(id: MatchId, contestants: Contenders) -> Self {
         Self {
             id,
             contenders: contestants,
@@ -31,7 +31,7 @@ impl Match {
         }
     }
 
-    pub fn id(&self) -> &Id {
+    pub fn id(&self) -> &MatchId {
         &self.id
     }
     pub fn contestants(&self) -> &Contenders {
