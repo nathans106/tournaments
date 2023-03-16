@@ -1,4 +1,4 @@
-use crate::bracket::MatchRef;
+use crate::bracket::match_ref::MatchRef;
 use crate::contestant::Contestant;
 use crate::match_::MatchState;
 use crate::match_contender::MatchContender;
