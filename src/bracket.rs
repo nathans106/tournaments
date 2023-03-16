@@ -1,10 +1,11 @@
 use crate::{contestant::Contestant, match_};
+use std::array;
 use std::cell::{Ref, RefCell};
 use std::collections::hash_map::Values;
 use std::collections::HashMap;
 use std::rc::Rc;
 
-use crate::match_::{Match, SetWinnerInvalid};
+use crate::match_::{Match, MatchState, SetWinnerInvalid};
 
 #[allow(dead_code)]
 #[derive(Default)]
@@ -22,6 +23,16 @@ impl Bracket {
         self.matches.get(id).map(|match_| MatchRef {
             match_: match_.clone(),
         })
+    }
+
+    pub fn current_matches(&self) -> Vec<CurrentMatch> {
+        self.iter()
+            .filter(|m| {
+                let state = m.borrow().state();
+                matches!(state, MatchState::Ready)
+            })
+            .map(CurrentMatch::from)
+            .collect()
     }
 
     pub fn iter(&self) -> BracketIterator {
@@ -72,5 +83,24 @@ impl<'a> Iterator for BracketIterator<'a> {
         Some(MatchRef {
             match_: match_.clone(),
         })
+    }
+}
+
+#[allow(dead_code)]
+pub struct CurrentMatch {
+    id: match_::Id,
+    contestants: [Contestant; 2],
+}
+
+impl From<MatchRef> for CurrentMatch {
+    fn from(match_ref: MatchRef) -> Self {
+        let match_ = match_ref.borrow();
+        assert!(matches!(match_.state(), MatchState::Ready));
+        let mut contestants_iter = match_.contestants().iter().map(|c| c.contestant().unwrap());
+
+        Self {
+            id: *match_.id(),
+            contestants: array::from_fn(|_| contestants_iter.next().unwrap()),
+        }
     }
 }
