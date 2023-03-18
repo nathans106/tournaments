@@ -10,6 +10,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::match_::{Match, MatchState, SetWinnerInvalid};
+use crate::match_over_observer::MatchOverPublisher;
 
 pub type MatchId = usize;
 
@@ -31,12 +32,24 @@ impl Bracket {
         self.matches.get(*id).map(|m| MatchRef::new(m.clone()))
     }
 
+    pub fn match_over_publisher(
+        &self,
+        id: &MatchId,
+    ) -> Option<Rc<RefCell<dyn MatchOverPublisher>>> {
+        self.matches.get(*id).map(|m| {
+            let match_ = m.clone();
+            let publisher: Rc<RefCell<dyn MatchOverPublisher>> = match_;
+            publisher
+        })
+    }
+
     pub fn current_matches(&self) -> Vec<CurrentMatch> {
         self.iter()
             .enumerate()
             .filter(|(_i, m)| {
-                let state = m.borrow().state();
-                matches!(state, MatchState::Ready)
+                let match_ = m.borrow();
+                let state = match_.state();
+                matches!(state, MatchState::InProgress(_))
             })
             .map(|(i, m)| CurrentMatch::new(i, &m))
             .collect()
@@ -46,15 +59,15 @@ impl Bracket {
         BracketIterator::from(&self.matches)
     }
 
-    pub fn insert(&mut self, match_: Match) -> MatchId {
-        self.matches.push(Rc::new(RefCell::new(match_)));
+    pub fn insert(&mut self, match_: Rc<RefCell<Match>>) -> MatchId {
+        self.matches.push(match_);
         self.matches.len() - 1
     }
 
     pub fn set_winner(
         &mut self,
         match_id: &MatchId,
-        winner: &Contestant,
+        winner: Contestant,
     ) -> Result<(), SetWinnerInvalid> {
         let maybe_match = self.matches.get_mut(*match_id);
 

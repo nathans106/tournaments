@@ -28,11 +28,11 @@ impl Tournament {
     pub fn set_winner(
         &mut self,
         match_id: &MatchId,
-        winner: &Contestant,
+        winner: Contestant,
     ) -> Result<Option<Contestant>, SetWinnerInvalid> {
-        self.bracket.set_winner(match_id, winner).map(|_| {
+        self.bracket.set_winner(match_id, winner.clone()).map(|_| {
             if match_id == &self.final_id {
-                return Some(winner.clone());
+                return Some(winner);
             }
 
             None

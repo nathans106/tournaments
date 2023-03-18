@@ -2,10 +2,11 @@ use crate::bracket;
 use crate::bracket::Bracket;
 use crate::bracket_builder::BracketBuilder;
 use crate::contestant::{Contestant, ContestantsError};
-use crate::match_::{Contenders, Match};
-use crate::match_contender::{MatchContender, NewContestant, Winner};
+use crate::match_::Match;
+use crate::match_over_observer::MatchOverSubscriber;
 use itertools::Itertools;
-use std::array;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct SingleElimination {}
 
@@ -20,18 +21,12 @@ impl BracketBuilder for SingleElimination {
         }
 
         let mut bracket = Bracket::default();
-
         let mut last_round = vec![];
-        for mut contestants_pair in &contestants.iter().chunks(2) {
-            let contenders: Contenders = array::from_fn(|i| {
-                let name = contestants_pair
-                    .next()
-                    .unwrap_or_else(|| panic!("Name {} missing", i));
-                let contender: Box<dyn MatchContender> = Box::new(NewContestant::new(name.clone()));
-                contender
-            });
 
-            last_round.push(bracket.insert(Match::new(contenders)));
+        for contestants_pair in &contestants.iter().chunks(2) {
+            let match_contestants = contestants_pair.into_iter().cloned().collect();
+            let match_ = Rc::new(RefCell::new(Match::new(match_contestants)));
+            last_round.push(bracket.insert(match_));
         }
 
         let num_rounds = (num_contestants as f64).sqrt() as u32;
@@ -41,18 +36,21 @@ impl BracketBuilder for SingleElimination {
             let mut cur_round = vec![];
 
             for match_num in 0..num_matches {
-                let mut contenders_iter = (0..2).map(|contestant_num| {
+                let match_ = Rc::new(RefCell::new(Match::default()));
+
+                for contestant_num in 0..2 {
                     let qualifying_match_id = last_round[(match_num * 2) + contestant_num];
+                    let qualifying_publisher =
+                        bracket.match_over_publisher(&qualifying_match_id).unwrap();
 
-                    let qualifying_match = bracket.match_(&qualifying_match_id).unwrap();
-                    let winner: Box<dyn MatchContender> = Box::new(Winner::new(qualifying_match));
-                    winner
-                });
+                    let subscriber: Rc<RefCell<dyn MatchOverSubscriber>> = match_.clone();
 
-                let selectors: Contenders =
-                    std::array::from_fn(|_| contenders_iter.next().unwrap());
+                    qualifying_publisher
+                        .borrow_mut()
+                        .subscribe_winner(Rc::downgrade(&subscriber));
+                }
 
-                cur_round.push(bracket.insert(Match::new(selectors)));
+                cur_round.push(bracket.insert(match_));
             }
 
             last_round = cur_round;

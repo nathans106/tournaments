@@ -2,7 +2,6 @@ use crate::bracket::match_ref::MatchRef;
 use crate::bracket::MatchId;
 use crate::contestant::Contestant;
 use crate::match_::MatchState;
-use std::array;
 
 pub struct CurrentMatch {
     pub id: MatchId,
@@ -12,12 +11,19 @@ pub struct CurrentMatch {
 impl CurrentMatch {
     pub fn new(id: MatchId, match_ref: &MatchRef) -> Self {
         let match_ = match_ref.borrow();
-        assert!(matches!(match_.state(), MatchState::Ready));
-        let mut contestants_iter = match_.contestants().iter().map(|c| c.contestant().unwrap());
+        match match_.state() {
+            MatchState::InProgress(contestants) => {
+                let mut contestants_iter = contestants.iter().cloned();
 
-        Self {
-            id,
-            contestants: array::from_fn(|_| contestants_iter.next().unwrap()),
+                Self {
+                    id,
+                    contestants: [
+                        contestants_iter.next().unwrap(),
+                        contestants_iter.next().unwrap(),
+                    ],
+                }
+            }
+            _ => panic!(),
         }
     }
 }
