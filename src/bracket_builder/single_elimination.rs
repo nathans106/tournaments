@@ -1,4 +1,3 @@
-use crate::bracket;
 use crate::bracket::Bracket;
 use crate::bracket_builder::BracketBuilder;
 use crate::contestant::{Contestant, ContestantsError};
@@ -11,9 +10,7 @@ use std::rc::Rc;
 pub struct SingleElimination {}
 
 impl BracketBuilder for SingleElimination {
-    fn build_bracket(
-        contestants: &[Contestant],
-    ) -> Result<(Bracket, bracket::MatchId), ContestantsError> {
+    fn build_bracket(contestants: &[Contestant]) -> Result<Bracket, ContestantsError> {
         let num_contestants = contestants.len();
 
         if !num_contestants.is_power_of_two() {
@@ -56,7 +53,6 @@ impl BracketBuilder for SingleElimination {
             last_round = cur_round;
         }
 
-        let final_id = *last_round.last().unwrap();
-        Ok((bracket, final_id))
+        Ok(bracket)
     }
 }

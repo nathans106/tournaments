@@ -4,8 +4,6 @@ use std::cell::RefCell;
 use std::collections::HashSet;
 use std::rc::Weak;
 
-pub type Contestants = HashSet<Contestant>;
-
 #[derive(Clone)]
 pub struct MatchResult {
     pub winner: Contestant,
@@ -14,8 +12,8 @@ pub struct MatchResult {
 
 #[derive(Clone)]
 pub enum MatchState {
-    Waiting(Contestants),
-    InProgress(Contestants),
+    Waiting(HashSet<Contestant>),
+    InProgress(HashSet<Contestant>),
     Finished(MatchResult),
 }
 
@@ -27,7 +25,7 @@ pub struct Match {
 }
 
 impl Match {
-    pub fn new(contestants: Contestants) -> Self {
+    pub fn new(contestants: HashSet<Contestant>) -> Self {
         if contestants.len() > 2 {
             panic!()
         }

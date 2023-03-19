@@ -1,4 +1,4 @@
-use crate::contestant::ContestantsError;
+use crate::contestant::{Contestant, ContestantsError};
 use crate::tournament::Tournament;
 
 pub mod bracket;
@@ -9,7 +9,7 @@ mod match_over_observer;
 pub mod tournament;
 
 pub fn single_elimination_tournament(
-    contestants: &[String],
+    contestants: &[Contestant],
 ) -> Result<Tournament, ContestantsError> {
     Tournament::new::<bracket_builder::SingleElimination>(contestants)
 }
