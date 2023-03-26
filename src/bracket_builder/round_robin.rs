@@ -8,7 +8,7 @@ use crate::match_::Match;
 use std::collections::HashSet;
 use std::iter::zip;
 
-/// Round Robin bracket builder. Uses the
+/// Round Robin [BracketBuilder]. Uses the
 /// [Circle Method algorithm](https://en.wikipedia.org/wiki/Round-robin_tournament#Circle_method)
 pub struct RoundRobin;
 

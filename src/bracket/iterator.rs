@@ -4,6 +4,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::slice::Iter;
 
+/// An iterator for [Bracket] which returns immutable [MatchRef] objects.
 pub struct BracketIterator<'a> {
     iterator: Iter<'a, Rc<RefCell<Match>>>,
 }

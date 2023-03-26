@@ -5,6 +5,12 @@ use crate::match_::{MatchState, SetWinnerInvalid};
 use itertools::Itertools;
 use std::collections::HashSet;
 
+/// The main entry point of this library. Handles interaction with its internal [Bracket],
+/// calculating rankings, and determining when the tournament is over.
+///
+/// A [Tournament] is constructed with a specified [BracketBuilder]. There are helper functions
+/// at the root level of this crate for Tournaments using the native builders. A custom [Bracket]
+/// can be used by implementing [BracketBuilder] and calling [Tournament::new].
 pub struct Tournament {
     bracket: Bracket,
     contestants: HashSet<Contestant>,

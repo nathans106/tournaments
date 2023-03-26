@@ -14,6 +14,7 @@ use crate::match_over_observer::MatchOverPublisher;
 
 pub type MatchId = usize;
 
+/// A set of matches that make up a tournament.
 #[derive(Default)]
 pub struct Bracket {
     matches: Vec<Rc<RefCell<Match>>>,

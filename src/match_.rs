@@ -17,6 +17,9 @@ pub enum MatchState {
     Finished(MatchResult),
 }
 
+/// A pairing of two contestants. The contestants may not be known at instantiation, for example
+/// if the match is a later stage of an elimination bracket. Match exposes a [MatchState] to signify
+/// whether it is waiting, ready/in progress, or finished with a loser and winner.
 #[derive(Clone)]
 pub struct Match {
     state: MatchState,

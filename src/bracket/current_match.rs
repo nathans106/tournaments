@@ -3,6 +3,7 @@ use crate::bracket::MatchId;
 use crate::contestant::Contestant;
 use crate::match_::MatchState;
 
+/// A match that is ready/in progress.
 pub struct CurrentMatch {
     pub id: MatchId,
     pub contestants: [Contestant; 2],

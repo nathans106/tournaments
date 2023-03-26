@@ -7,6 +7,8 @@ use itertools::Itertools;
 use std::cell::RefCell;
 use std::rc::Rc;
 
+/// [Single Elimination](https://en.wikipedia.org/wiki/Single-elimination_tournament)
+/// [BracketBuilder].
 pub struct SingleElimination {}
 
 impl BracketBuilder for SingleElimination {

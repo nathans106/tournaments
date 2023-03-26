@@ -2,6 +2,7 @@ use crate::match_::Match;
 use std::cell::{Ref, RefCell};
 use std::rc::Rc;
 
+/// An immutable reference to a Match.
 pub struct MatchRef {
     match_: Rc<RefCell<Match>>,
 }
