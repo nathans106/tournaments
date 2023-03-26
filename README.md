@@ -1,6 +1,6 @@
-# tournaments (alpha)
+# tournaments
 
-Rust library for running tournaments. Currently in alpha so be aware it is subject to change and feature incomplete.
+Rust library for running tournaments. Be aware it's early days so the API is likely to change.
 
 [![Crates.io](https://img.shields.io/crates/v/tournaments)](https://crates.io/crates/tournaments)
 [![docs.rs](https://img.shields.io/docsrs/tournaments)](https://docs.rs/tournaments)
