@@ -1,14 +1,14 @@
 //! Library for the construction and running of tournaments.
 
-use crate::contestant::{Contestant, ContestantsError};
-use crate::tournament::Tournament;
-
 pub mod bracket;
 pub mod bracket_builder;
-pub mod contestant;
-mod match_;
-mod match_over_observer;
-pub mod tournament;
+mod contestant;
+pub mod match_;
+pub mod match_over_observer;
+mod tournament;
+
+pub use contestant::{Contestant, ContestantsError};
+pub use tournament::Tournament;
 
 /// Constructs a new Round Robin [Tournament].
 pub fn round_robin_tournament(contestants: &[Contestant]) -> Result<Tournament, ContestantsError> {
