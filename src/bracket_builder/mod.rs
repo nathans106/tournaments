@@ -1,4 +1,7 @@
+mod round_robin;
 mod single_elimination;
+
+pub use round_robin::RoundRobin;
 pub use single_elimination::SingleElimination;
 
 use crate::bracket::Bracket;
